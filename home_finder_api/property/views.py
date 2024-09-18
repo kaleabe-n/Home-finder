@@ -124,6 +124,7 @@ def properties_api(request: Request) -> Response:
                 parking=data.get("parking", None),
                 is_furnished=data.get("is_furnished", None),
                 house_area=data.get("house_area"),
+                description=data.get("description","no description")
             )
             if data.get("photos", False):
                 photos = dict((request.FILES).lists()).get("photos", None)
@@ -182,7 +183,7 @@ def property_detail_api(request: Request, pk: str) -> Response:
     except Property.DoesNotExist:
         return Response("property does not exits", status=404)
 
-    if (not user.is_superuser) and (property.posted_by is not user):
+    if (not user.is_superuser) and (property.posted_by is not user) and request.method!="GET":
         return Response(
             "unauthorized access make sure you are the owner of the property",
             status=403,

@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import *
+from user.serilizers import UserSerilizer
 
 
 class AddressSerializer(ModelSerializer):
@@ -32,15 +33,8 @@ class PropertySerializer(ModelSerializer):
 
     def get_posted_by(self, property: Property):
         user = property.posted_by
-        data = {}
-        try:
-            data["profile"] = user.profile.url
-        except:
-            data["profile"] = None
-        data["phone"] = user.phone
-        data["username"] = user.username
-        data["is_verified"] = user.is_verified
-        return data
+        serilizer = UserSerilizer(user)
+        return serilizer.data
 
     def get_photos(self, property: Property):
         paths = []
@@ -66,4 +60,5 @@ class PropertySerializer(ModelSerializer):
             "photos",
             "type",
             "is_sold",
+            "description"
         ]

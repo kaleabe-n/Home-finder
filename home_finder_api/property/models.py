@@ -13,9 +13,14 @@ class Address(models.Model):
     city = models.CharField(max_length=30,null=True,blank=True)
     zone = models.CharField(max_length=30,null=True,blank=True)
     specific_location = models.CharField(max_length=40,null=True,blank=True)
-    
+    def __str__(self):
+        return self.region + self.city + self.zone + self.specific_location
+
+
 class Type(models.Model):
     name = models.CharField(max_length=30)
+    def __str__(self) -> str:
+        return self.name
 
 class Property(models.Model):
     class Choices(models.IntegerChoices):
@@ -30,7 +35,7 @@ class Property(models.Model):
         EIGHT = 8, "eight"
         NINE = 9, "nine"
         TEN = 10, "ten"
-
+    description = models.TextField()
     address = models.ForeignKey(to=Address, on_delete=models.CASCADE)
     price = models.IntegerField()
     bed_rooms = models.IntegerField(choices=Choices.choices, default=Choices.ZERO)
@@ -44,7 +49,9 @@ class Property(models.Model):
     updated = models.DateTimeField(auto_now=True)
     property_type = models.ForeignKey(to=Type,on_delete=models.SET_NULL,null=True,related_name="property_type")
     is_sold = models.BooleanField(default=False)
-
+    
+    def __str__(self) -> str:
+        return (self.property_type.name if self.property_type else "") + self.address.__str__()
     class Meta:
         ordering = ["-updated"]
 

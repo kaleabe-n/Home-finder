@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.parsers import MultiPartParser
+from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from django.contrib.auth.hashers import make_password
 from .models import *
@@ -96,6 +97,19 @@ def register_user(request):
 
     data = {"access": access_token, "refresh": refresh_token, "user": serilizer.data}
     verification = Verification.objects.create(user=user)
+    try:
+        email = EmailMessage(
+            "Verify home finder",
+            email_text(verification.code),
+            "noreply@gmail.com",
+            ["nkaleabe001@gmail.com"],
+        )
+        email.content_subtype = "html"
+        email.body = email_text(verification.code)
+        email.send(fail_silently=False)
+    except Exception as e:
+        print(e)
+        return Response("failed to send email", status=500)
 
     return Response(data, status=201)
 
@@ -132,11 +146,14 @@ def get_verification(request: Request):
 @permission_classes([IsAuthenticated])
 def verify(request: Request):
     code = request.data.get("code", None)
+    code = code.replace("-", "")
     user = request.user
     try:
-        verification = Verification.objects.get(user=user, code=code)
+        verification = Verification.objects.get(code=code)
     except:
         return Response("verification not found", status=404)
+    if verification.user != user:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
     user.is_verified = True
     user.save()
     verification.delete()
