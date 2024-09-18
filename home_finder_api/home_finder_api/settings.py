@@ -20,9 +20,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "nkaleabe@gmail.com"  # Your Gmail address
-EMAIL_HOST_PASSWORD = "ffpsrqeovfueojuc "  # Your Gmail password or app password
+EMAIL_PORT = 587 # Your Gmail password or app password
+EMAIL_HOST_USER = 'nkaleabe@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = ''  # Your Gmail password or app password
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = (
     "nkaleabe@gmail.com"  # The email address to be used as the "from" address
